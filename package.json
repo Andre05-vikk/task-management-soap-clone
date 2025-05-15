@@ -1,0 +1,19 @@
+{
+  "name": "task-soap-clone",
+  "version": "1.0.0",
+  "description": "SOAP service that clones REST API functionality",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node tests/test.sh"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "soap": "^1.1.11",
+    "uuid": "^9.0.1"
+  },
+  "author": "",
+  "license": "ISC"
+}

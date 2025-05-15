@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="TaskService"
+             targetNamespace="http://localhost:8000/task-service"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://localhost:8000/task-service"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Types definition -->
+    <types>
+        <xsd:schema targetNamespace="http://localhost:8000/task-service">
+            <!-- User type -->
+            <xsd:complexType name="User">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="username" type="xsd:string"/>
+                    <xsd:element name="password" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="email" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Task type -->
+            <xsd:complexType name="Task">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="title" type="xsd:string"/>
+                    <xsd:element name="description" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="completed" type="xsd:boolean" minOccurs="0"/>
+                    <xsd:element name="userId" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Array types -->
+            <xsd:complexType name="UserArray">
+                <xsd:sequence>
+                    <xsd:element name="user" type="tns:User" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="TaskArray">
+                <xsd:sequence>
+                    <xsd:element name="task" type="tns:Task" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Authentication -->
+            <xsd:element name="LoginRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="username" type="xsd:string"/>
+                        <xsd:element name="password" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="LoginResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="LogoutRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="LogoutResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="success" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- User operations -->
+            <xsd:element name="CreateUserRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="user" type="tns:User"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="CreateUserResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="user" type="tns:User"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetUsersRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetUsersResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="users" type="tns:UserArray"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetUserRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetUserResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="user" type="tns:User"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="UpdateUserRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="user" type="tns:User"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="UpdateUserResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="user" type="tns:User"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="DeleteUserRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="DeleteUserResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="success" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Task operations -->
+            <xsd:element name="CreateTaskRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="task" type="tns:Task"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="CreateTaskResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="task" type="tns:Task"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTasksRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetTasksResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="tasks" type="tns:TaskArray"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="UpdateTaskRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="taskId" type="xsd:string"/>
+                        <xsd:element name="task" type="tns:Task"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="UpdateTaskResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="task" type="tns:Task"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="DeleteTaskRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="taskId" type="xsd:string"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="DeleteTaskResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="success" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Fault type -->
+            <xsd:element name="ServiceFault">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="message" type="xsd:string"/>
+                        <xsd:element name="code" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <!-- Messages -->
+    <!-- Authentication -->
+    <message name="LoginRequest">
+        <part name="parameters" element="tns:LoginRequest"/>
+    </message>
+    <message name="LoginResponse">
+        <part name="parameters" element="tns:LoginResponse"/>
+    </message>
+    <message name="LogoutRequest">
+        <part name="parameters" element="tns:LogoutRequest"/>
+    </message>
+    <message name="LogoutResponse">
+        <part name="parameters" element="tns:LogoutResponse"/>
+    </message>
+
+    <!-- User operations -->
+    <message name="CreateUserRequest">
+        <part name="parameters" element="tns:CreateUserRequest"/>
+    </message>
+    <message name="CreateUserResponse">
+        <part name="parameters" element="tns:CreateUserResponse"/>
+    </message>
+    <message name="GetUsersRequest">
+        <part name="parameters" element="tns:GetUsersRequest"/>
+    </message>
+    <message name="GetUsersResponse">
+        <part name="parameters" element="tns:GetUsersResponse"/>
+    </message>
+    <message name="GetUserRequest">
+        <part name="parameters" element="tns:GetUserRequest"/>
+    </message>
+    <message name="GetUserResponse">
+        <part name="parameters" element="tns:GetUserResponse"/>
+    </message>
+    <message name="UpdateUserRequest">
+        <part name="parameters" element="tns:UpdateUserRequest"/>
+    </message>
+    <message name="UpdateUserResponse">
+        <part name="parameters" element="tns:UpdateUserResponse"/>
+    </message>
+    <message name="DeleteUserRequest">
+        <part name="parameters" element="tns:DeleteUserRequest"/>
+    </message>
+    <message name="DeleteUserResponse">
+        <part name="parameters" element="tns:DeleteUserResponse"/>
+    </message>
+
+    <!-- Task operations -->
+    <message name="CreateTaskRequest">
+        <part name="parameters" element="tns:CreateTaskRequest"/>
+    </message>
+    <message name="CreateTaskResponse">
+        <part name="parameters" element="tns:CreateTaskResponse"/>
+    </message>
+    <message name="GetTasksRequest">
+        <part name="parameters" element="tns:GetTasksRequest"/>
+    </message>
+    <message name="GetTasksResponse">
+        <part name="parameters" element="tns:GetTasksResponse"/>
+    </message>
+    <message name="UpdateTaskRequest">
+        <part name="parameters" element="tns:UpdateTaskRequest"/>
+    </message>
+    <message name="UpdateTaskResponse">
+        <part name="parameters" element="tns:UpdateTaskResponse"/>
+    </message>
+    <message name="DeleteTaskRequest">
+        <part name="parameters" element="tns:DeleteTaskRequest"/>
+    </message>
+    <message name="DeleteTaskResponse">
+        <part name="parameters" element="tns:DeleteTaskResponse"/>
+    </message>
+
+    <!-- Fault message -->
+    <message name="ServiceFault">
+        <part name="parameters" element="tns:ServiceFault"/>
+    </message>
+
+    <!-- Port Type -->
+    <portType name="TaskServicePortType">
+        <!-- Authentication -->
+        <operation name="Login">
+            <input message="tns:LoginRequest"/>
+            <output message="tns:LoginResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="Logout">
+            <input message="tns:LogoutRequest"/>
+            <output message="tns:LogoutResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+
+        <!-- User operations -->
+        <operation name="CreateUser">
+            <input message="tns:CreateUserRequest"/>
+            <output message="tns:CreateUserResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="GetUsers">
+            <input message="tns:GetUsersRequest"/>
+            <output message="tns:GetUsersResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="GetUser">
+            <input message="tns:GetUserRequest"/>
+            <output message="tns:GetUserResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="UpdateUser">
+            <input message="tns:UpdateUserRequest"/>
+            <output message="tns:UpdateUserResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="DeleteUser">
+            <input message="tns:DeleteUserRequest"/>
+            <output message="tns:DeleteUserResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+
+        <!-- Task operations -->
+        <operation name="CreateTask">
+            <input message="tns:CreateTaskRequest"/>
+            <output message="tns:CreateTaskResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="GetTasks">
+            <input message="tns:GetTasksRequest"/>
+            <output message="tns:GetTasksResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="UpdateTask">
+            <input message="tns:UpdateTaskRequest"/>
+            <output message="tns:UpdateTaskResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+        <operation name="DeleteTask">
+            <input message="tns:DeleteTaskRequest"/>
+            <output message="tns:DeleteTaskResponse"/>
+            <fault name="ServiceFault" message="tns:ServiceFault"/>
+        </operation>
+    </portType>
+
+    <!-- Binding -->
+    <binding name="TaskServiceBinding" type="tns:TaskServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <!-- Authentication -->
+        <operation name="Login">
+            <soap:operation soapAction="http://localhost:8000/task-service/Login"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="Logout">
+            <soap:operation soapAction="http://localhost:8000/task-service/Logout"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+
+        <!-- User operations -->
+        <operation name="CreateUser">
+            <soap:operation soapAction="http://localhost:8000/task-service/CreateUser"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="GetUsers">
+            <soap:operation soapAction="http://localhost:8000/task-service/GetUsers"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="GetUser">
+            <soap:operation soapAction="http://localhost:8000/task-service/GetUser"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="UpdateUser">
+            <soap:operation soapAction="http://localhost:8000/task-service/UpdateUser"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="DeleteUser">
+            <soap:operation soapAction="http://localhost:8000/task-service/DeleteUser"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+
+        <!-- Task operations -->
+        <operation name="CreateTask">
+            <soap:operation soapAction="http://localhost:8000/task-service/CreateTask"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="GetTasks">
+            <soap:operation soapAction="http://localhost:8000/task-service/GetTasks"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="UpdateTask">
+            <soap:operation soapAction="http://localhost:8000/task-service/UpdateTask"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="DeleteTask">
+            <soap:operation soapAction="http://localhost:8000/task-service/DeleteTask"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="ServiceFault">
+                <soap:fault name="ServiceFault" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+
+    <!-- Service -->
+    <service name="TaskService">
+        <port name="TaskServicePort" binding="tns:TaskServiceBinding">
+            <soap:address location="http://localhost:8000/task-service"/>
+        </port>
+    </service>
+</definitions>
