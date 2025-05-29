@@ -101,3 +101,7 @@ Desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# Test generated files
+soap-api.log
+rest-api.log

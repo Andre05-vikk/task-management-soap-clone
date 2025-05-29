@@ -5,9 +5,12 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "node tests/test.sh"
+    "test": "node tests/test.sh",
+    "test:equivalence": "node tests/equivalence-tests.js",
+    "test:equivalence:full": "./tests/run-equivalence-tests.sh"
   },
   "dependencies": {
+    "axios": "^1.6.2",
     "body-parser": "^1.20.3",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
