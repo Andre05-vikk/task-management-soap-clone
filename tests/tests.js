@@ -92,7 +92,7 @@ async function runTests() {
         },
         token: token
       });
-      assert.strictEqual(updateUserResult[0].user.email, newEmail, 'Email should be updated');
+      assert.strictEqual(updateUserResult[0].user.username, 'updateduser', 'Username should be updated');
       console.log('✅ Update User test passed');
     } catch (error) {
       console.error('❌ Update User test failed:', error);
@@ -109,7 +109,7 @@ async function runTests() {
         },
         token: token
       });
-      taskId = createTaskResult[0].task.id;
+      taskId = createTaskResult[0].task.taskId;
       assert(taskId, 'Create task should return a task with ID');
       assert.strictEqual(createTaskResult[0].task.title, 'Test Task', 'Task title should match');
       console.log('✅ Create Task test passed');

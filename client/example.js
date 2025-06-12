@@ -77,7 +77,7 @@ async function runExamples() {
     });
     console.log('Create task response:', createTaskResult[0]);
     
-    const taskId = createTaskResult[0].task.id;
+    const taskId = createTaskResult[0].task.taskId;
     
     // Get tasks example
     console.log('\nGetting all tasks:');

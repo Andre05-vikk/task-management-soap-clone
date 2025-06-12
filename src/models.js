@@ -1,17 +1,27 @@
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+
+// JWT secret - in production this should come from environment variables
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // In-memory storage
 const users = [];
 const tasks = [];
 const sessions = {};
 
+// Counters for integer IDs to match REST API
+let userIdCounter = 1;
+let taskIdCounter = 1;
+
 // User model
 class User {
   constructor(username, password, email) {
-    this.id = uuidv4();
+    this.id = userIdCounter++;
     this.username = username;
     this.password = password;
     this.email = email || '';
+    this.createdAt = new Date().toISOString();
+    this.updatedAt = new Date().toISOString();
   }
 
   static create(userData) {
@@ -38,7 +48,7 @@ class User {
     if (index === -1) return null;
 
     const user = users[index];
-    const updatedUser = { ...user, ...userData };
+    const updatedUser = { ...user, ...userData, updatedAt: new Date().toISOString() };
     users[index] = updatedUser;
     return updatedUser;
   }
@@ -55,7 +65,7 @@ class User {
 // Task model
 class Task {
   constructor(title, description, userId) {
-    this.id = uuidv4();
+    this.id = taskIdCounter++;
     this.title = title;
     this.description = description || '';
     this.completed = false;
@@ -98,14 +108,33 @@ class Task {
 
 // Session management
 class Session {
-  static create(userId) {
-    const token = uuidv4();
-    sessions[token] = userId;
+  static create(userId, username) {
+    // Create JWT token similar to REST API
+    const token = jwt.sign(
+      { id: userId, email: username },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    // Store token in blacklist check (for logout functionality)
+    sessions[token] = { userId, username, createdAt: new Date() };
     return token;
   }
 
   static validate(token) {
-    return sessions[token];
+    try {
+      // Verify JWT token
+      const decoded = jwt.verify(token, JWT_SECRET);
+      
+      // Check if token is not blacklisted (logged out)
+      if (!sessions[token]) {
+        return null;
+      }
+      
+      return decoded.id;
+    } catch (error) {
+      return null;
+    }
   }
 
   static delete(token) {

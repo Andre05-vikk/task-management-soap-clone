@@ -61,9 +61,13 @@ const taskService = {
             email: user.email
           });
           
-          // Don't return password in response
-          const userResponse = { ...newUser };
-          delete userResponse.password;
+          // Return only fields that match REST API format
+          const userResponse = {
+            id: newUser.id,
+            username: newUser.username,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt
+          };
           
           return { user: userResponse };
         } catch (error) {
@@ -89,12 +93,13 @@ const taskService = {
           
           const allUsers = User.findAll();
           
-          // Don't return passwords in response
-          const users = allUsers.map(user => {
-            const userWithoutPassword = { ...user };
-            delete userWithoutPassword.password;
-            return userWithoutPassword;
-          });
+          // Return only fields that match REST API format
+          const users = allUsers.map(user => ({
+            id: user.id,
+            username: user.username,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+          }));
           
           return { users: { user: users } };
         } catch (error) {
@@ -123,9 +128,13 @@ const taskService = {
             throw new Error('User not found');
           }
           
-          // Don't return password in response
-          const userResponse = { ...user };
-          delete userResponse.password;
+          // Return only fields that match REST API format
+          const userResponse = {
+            id: user.id,
+            username: user.username,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+          };
           
           return { user: userResponse };
         } catch (error) {
@@ -164,9 +173,13 @@ const taskService = {
             throw new Error('User not found');
           }
           
-          // Don't return password in response
-          const userResponse = { ...updatedUser };
-          delete userResponse.password;
+          // Return only fields that match REST API format
+          const userResponse = {
+            id: updatedUser.id,
+            username: updatedUser.username,
+            createdAt: updatedUser.createdAt,
+            updatedAt: updatedUser.updatedAt
+          };
           
           return { user: userResponse };
         } catch (error) {
@@ -229,7 +242,17 @@ const taskService = {
             userId: user.id
           });
           
-          return { task: newTask };
+          // Return response in REST API format
+          return {
+            task: {
+              success: true,
+              message: 'Task created successfully',
+              taskId: newTask.id,
+              title: newTask.title,
+              description: newTask.description,
+              status: 'pending'
+            }
+          };
         } catch (error) {
           throw {
             Fault: {
@@ -259,7 +282,15 @@ const taskService = {
             allTasks = Task.findAll().filter(task => task.userId === user.id);
           }
           
-          return { tasks: { task: allTasks } };
+          // Return paginated response matching REST API format
+          return { 
+            tasks: { 
+              page: 1,
+              limit: 10,
+              total: allTasks.length,
+              task: allTasks 
+            } 
+          };
         } catch (error) {
           throw {
             Fault: {

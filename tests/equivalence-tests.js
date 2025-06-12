@@ -67,11 +67,12 @@ async function runEquivalenceTests() {
       password: 'admin123'
     });
     soapToken = soapLoginResult[0].token;
+    console.log('SOAP Login result:', soapLoginResult[0]);
 
     // REST - First create admin user if it doesn't exist
     try {
       await axios.post(`${REST_BASE_URL}/users`, {
-        email: 'admin',
+        email: 'admin2@example.com',
         password: 'admin123'
       });
       console.log('Created admin user for REST API');
@@ -85,10 +86,11 @@ async function runEquivalenceTests() {
 
     // REST Login
     const restLoginResponse = await axios.post(`${REST_BASE_URL}/sessions`, {
-      email: 'admin',
+      email: 'admin2@example.com',
       password: 'admin123'
     });
     restToken = restLoginResponse.data.token;
+    console.log('REST Login result:', restLoginResponse.data);
     
     // Compare authentication results
     const authEquivalent = !!(soapToken && restToken);
@@ -110,6 +112,7 @@ async function runEquivalenceTests() {
       }
     });
     const soapUser = soapUserResult[0].user;
+    console.log('SOAP Create User result:', soapUserResult[0]);
     
     // REST Create User
     const restUserResponse = await axios.post(`${REST_BASE_URL}/users`, {
@@ -117,6 +120,7 @@ async function runEquivalenceTests() {
       password: testPassword
     });
     const restUser = restUserResponse.data;
+    console.log('REST Create User result:', restUserResponse.data);
     
     // Compare user creation results
     const userCreationEquivalent = !!(soapUser.username && restUser.username);
@@ -130,12 +134,14 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapUsers = soapUsersResult[0].users.user;
+    console.log('SOAP Get Users result:', soapUsersResult[0]);
     
     // REST Get Users
     const restUsersResponse = await axios.get(`${REST_BASE_URL}/users`, {
       headers: { Authorization: `Bearer ${restToken}` }
     });
     const restUsers = restUsersResponse.data;
+    console.log('REST Get Users result:', restUsersResponse.data);
     
     // Compare users list
     const usersListEquivalent = Array.isArray(soapUsers) && Array.isArray(restUsers) && 
@@ -157,6 +163,7 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapTask = soapTaskResult[0].task;
+    console.log('SOAP Create Task result:', soapTaskResult[0]);
     
     // REST Create Task
     const restTaskResponse = await axios.post(`${REST_BASE_URL}/tasks`, {
@@ -166,6 +173,7 @@ async function runEquivalenceTests() {
       headers: { Authorization: `Bearer ${restToken}` }
     });
     const restTask = restTaskResponse.data;
+    console.log('REST Create Task result:', restTaskResponse.data);
 
 
 
@@ -182,6 +190,7 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapTasks = soapTasksResult[0].tasks.task;
+    console.log('SOAP Get Tasks result:', soapTasksResult[0]);
 
     // REST Get Tasks
     const restTasksResponse = await axios.get(`${REST_BASE_URL}/tasks`, {
@@ -189,6 +198,7 @@ async function runEquivalenceTests() {
     });
 
     const restTasks = restTasksResponse.data.tasks; // REST API returns { tasks: [...], pagination: {...} }
+    console.log('REST Get Tasks result:', restTasksResponse.data);
 
     // Compare tasks list - both should return arrays and contain our created task
     const tasksListEquivalent = Array.isArray(soapTasks) && Array.isArray(restTasks) &&
@@ -204,7 +214,7 @@ async function runEquivalenceTests() {
 
     // SOAP Update Task
     const soapUpdateResult = await soapClient.UpdateTaskAsync({
-      taskId: soapTask.id,
+      taskId: soapTask.taskId,
       task: {
         title: updatedTitle,
         description: updatedDescription,
@@ -213,6 +223,7 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapUpdatedTask = soapUpdateResult[0].task;
+    console.log('SOAP Update Task result:', soapUpdateResult[0]);
 
     // REST Update Task (use taskId from creation response)
     const restUpdateResponse = await axios.patch(`${REST_BASE_URL}/tasks/${restTask.taskId}`, {
@@ -223,6 +234,7 @@ async function runEquivalenceTests() {
       headers: { Authorization: `Bearer ${restToken}` }
     });
     const restUpdatedTask = restUpdateResponse.data;
+    console.log('REST Update Task result:', restUpdateResponse.data);
 
 
 
@@ -265,12 +277,14 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapRetrievedUser = soapGetUserResult[0].user;
+    console.log('SOAP Get User result:', soapGetUserResult[0]);
 
     // REST Get User
     const restGetUserResponse = await axios.get(`${REST_BASE_URL}/users/${restUser.id}`, {
       headers: { Authorization: `Bearer ${restToken}` }
     });
     const restRetrievedUser = restGetUserResponse.data;
+    console.log('REST Get User result:', restGetUserResponse.data);
 
     // Compare get user results
     const getUserEquivalent = soapRetrievedUser.username === restRetrievedUser.username;
@@ -286,7 +300,7 @@ async function runEquivalenceTests() {
     const restUsersForUpdateResponse = await axios.get(`${REST_BASE_URL}/users`, {
       headers: { Authorization: `Bearer ${restToken}` }
     });
-    const adminUser = restUsersForUpdateResponse.data.find(u => u.username === 'admin');
+    const adminUser = restUsersForUpdateResponse.data.find(u => u.username === 'admin2@example.com');
 
     // SOAP Update User (admin can update any user)
     const soapUpdateUserResult = await soapClient.UpdateUserAsync({
@@ -299,6 +313,7 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapUpdatedUser = soapUpdateUserResult[0].user;
+    console.log('SOAP Update User result:', soapUpdateUserResult[0]);
 
     // REST Update User (admin updates own password)
     const restUpdateUserResponse = await axios.patch(`${REST_BASE_URL}/users/${adminUser.id}`, {
@@ -307,6 +322,7 @@ async function runEquivalenceTests() {
       headers: { Authorization: `Bearer ${restToken}` }
     });
     const restUpdatedUser = restUpdateUserResponse.data;
+    console.log('REST Update User result:', restUpdateUserResponse.data);
 
     // Compare user update results - both should succeed
     const userUpdateEquivalent = soapUpdatedUser && restUpdatedUser;
@@ -317,16 +333,19 @@ async function runEquivalenceTests() {
 
     // SOAP Delete Task
     const soapDeleteTaskResult = await soapClient.DeleteTaskAsync({
-      taskId: soapTask.id,
+      taskId: soapTask.taskId,
       token: soapToken
     });
     const soapTaskDeleteSuccess = soapDeleteTaskResult[0].success;
+    console.log('SOAP Delete Task result:', soapDeleteTaskResult[0]);
 
     // REST Delete Task
     const restDeleteTaskResponse = await axios.delete(`${REST_BASE_URL}/tasks/${restTask.taskId}`, {
       headers: { Authorization: `Bearer ${restToken}` }
     });
     const restTaskDeleteSuccess = restDeleteTaskResponse.status === 204;
+    console.log('REST Delete Task status:', restDeleteTaskResponse.status);
+    console.log('REST Delete Task result:', restDeleteTaskResponse.data || 'No response body');
 
     // Compare task deletion results
     const taskDeleteEquivalent = soapTaskDeleteSuccess && restTaskDeleteSuccess;
@@ -347,6 +366,7 @@ async function runEquivalenceTests() {
       }
     });
     const soapDeleteTestUser = soapDeleteTestUserResult[0].user;
+    console.log('SOAP Create User for deletion result:', soapDeleteTestUserResult[0]);
 
     // REST Create user for deletion
     const restDeleteTestUserResponse = await axios.post(`${REST_BASE_URL}/users`, {
@@ -354,6 +374,7 @@ async function runEquivalenceTests() {
       password: 'deletetest123'
     });
     const restDeleteTestUser = restDeleteTestUserResponse.data;
+    console.log('REST Create User for deletion result:', restDeleteTestUserResponse.data);
 
     // Login as the test user for REST API (since REST only allows self-deletion)
     const restDeleteTestLoginResponse = await axios.post(`${REST_BASE_URL}/sessions`, {
@@ -361,6 +382,7 @@ async function runEquivalenceTests() {
       password: 'deletetest123'
     });
     const restDeleteTestToken = restDeleteTestLoginResponse.data.token;
+    console.log('REST Login for deletion test result:', restDeleteTestLoginResponse.data);
 
     // SOAP Delete User (admin can delete any user)
     const soapDeleteUserResult = await soapClient.DeleteUserAsync({
@@ -368,12 +390,15 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapUserDeleteSuccess = soapDeleteUserResult[0].success;
+    console.log('SOAP Delete User result:', soapDeleteUserResult[0]);
 
     // REST Delete User (user deletes own account)
     const restDeleteUserResponse = await axios.delete(`${REST_BASE_URL}/users/${restDeleteTestUser.id}`, {
       headers: { Authorization: `Bearer ${restDeleteTestToken}` }
     });
     const restUserDeleteSuccess = restDeleteUserResponse.status === 204;
+    console.log('REST Delete User status:', restDeleteUserResponse.status);
+    console.log('REST Delete User result:', restDeleteUserResponse.data || 'No response body');
 
     // Compare user deletion results
     const userDeleteEquivalent = soapUserDeleteSuccess && restUserDeleteSuccess;
@@ -387,12 +412,15 @@ async function runEquivalenceTests() {
       token: soapToken
     });
     const soapLogoutSuccess = soapLogoutResult[0].success;
+    console.log('SOAP Logout result:', soapLogoutResult[0]);
     
     // REST Logout
     const restLogoutResponse = await axios.delete(`${REST_BASE_URL}/sessions`, {
       headers: { Authorization: `Bearer ${restToken}` }
     });
     const restLogoutSuccess = restLogoutResponse.status === 204;
+    console.log('REST Logout status:', restLogoutResponse.status);
+    console.log('REST Logout result:', restLogoutResponse.data || 'No response body');
     
     // Compare logout results
     const logoutEquivalent = soapLogoutSuccess && restLogoutSuccess;

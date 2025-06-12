@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.."
 
 # Check if server is running
-if ! curl -s http://localhost:8000/health > /dev/null; then
+if ! curl -s "http://localhost:8000/task-service?wsdl" > /dev/null; then
   echo "Starting server..."
   node src/index.js &
   SERVER_PID=$!

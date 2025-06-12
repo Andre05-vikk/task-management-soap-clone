@@ -12,7 +12,7 @@
             <!-- User type -->
             <xsd:complexType name="User">
                 <xsd:sequence>
-                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="id" type="xsd:int"/>
                     <xsd:element name="username" type="xsd:string"/>
                     <xsd:element name="password" type="xsd:string" minOccurs="0"/>
                     <xsd:element name="email" type="xsd:string" minOccurs="0"/>
@@ -22,11 +22,23 @@
             <!-- Task type -->
             <xsd:complexType name="Task">
                 <xsd:sequence>
-                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="id" type="xsd:int"/>
                     <xsd:element name="title" type="xsd:string"/>
                     <xsd:element name="description" type="xsd:string" minOccurs="0"/>
                     <xsd:element name="completed" type="xsd:boolean" minOccurs="0"/>
-                    <xsd:element name="userId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="userId" type="xsd:int" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Task creation response type -->
+            <xsd:complexType name="TaskCreationResponse">
+                <xsd:sequence>
+                    <xsd:element name="success" type="xsd:boolean"/>
+                    <xsd:element name="message" type="xsd:string"/>
+                    <xsd:element name="taskId" type="xsd:int"/>
+                    <xsd:element name="title" type="xsd:string"/>
+                    <xsd:element name="description" type="xsd:string"/>
+                    <xsd:element name="status" type="xsd:string"/>
                 </xsd:sequence>
             </xsd:complexType>
 
@@ -39,6 +51,16 @@
 
             <xsd:complexType name="TaskArray">
                 <xsd:sequence>
+                    <xsd:element name="task" type="tns:Task" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <!-- Paginated Task Array for REST API compatibility -->
+            <xsd:complexType name="PaginatedTaskArray">
+                <xsd:sequence>
+                    <xsd:element name="page" type="xsd:int"/>
+                    <xsd:element name="limit" type="xsd:int"/>
+                    <xsd:element name="total" type="xsd:int"/>
                     <xsd:element name="task" type="tns:Task" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:sequence>
             </xsd:complexType>
@@ -113,7 +135,7 @@
             <xsd:element name="GetUserRequest">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="userId" type="xsd:int"/>
                         <xsd:element name="token" type="xsd:string"/>
                     </xsd:sequence>
                 </xsd:complexType>
@@ -130,7 +152,7 @@
             <xsd:element name="UpdateUserRequest">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="userId" type="xsd:int"/>
                         <xsd:element name="user" type="tns:User"/>
                         <xsd:element name="token" type="xsd:string"/>
                     </xsd:sequence>
@@ -148,7 +170,7 @@
             <xsd:element name="DeleteUserRequest">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="userId" type="xsd:string"/>
+                        <xsd:element name="userId" type="xsd:int"/>
                         <xsd:element name="token" type="xsd:string"/>
                     </xsd:sequence>
                 </xsd:complexType>
@@ -175,7 +197,7 @@
             <xsd:element name="CreateTaskResponse">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="task" type="tns:Task"/>
+                        <xsd:element name="task" type="tns:TaskCreationResponse"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -191,7 +213,7 @@
             <xsd:element name="GetTasksResponse">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="tasks" type="tns:TaskArray"/>
+                        <xsd:element name="tasks" type="tns:PaginatedTaskArray"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
@@ -199,7 +221,7 @@
             <xsd:element name="UpdateTaskRequest">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="taskId" type="xsd:string"/>
+                        <xsd:element name="taskId" type="xsd:int"/>
                         <xsd:element name="task" type="tns:Task"/>
                         <xsd:element name="token" type="xsd:string"/>
                     </xsd:sequence>
@@ -217,7 +239,7 @@
             <xsd:element name="DeleteTaskRequest">
                 <xsd:complexType>
                     <xsd:sequence>
-                        <xsd:element name="taskId" type="xsd:string"/>
+                        <xsd:element name="taskId" type="xsd:int"/>
                         <xsd:element name="token" type="xsd:string"/>
                     </xsd:sequence>
                 </xsd:complexType>

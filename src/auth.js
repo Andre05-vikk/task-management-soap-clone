@@ -8,7 +8,7 @@ class AuthService {
       throw new Error('Invalid username or password');
     }
     
-    const token = Session.create(user.id);
+    const token = Session.create(user.id, user.username);
     return token;
   }
 
